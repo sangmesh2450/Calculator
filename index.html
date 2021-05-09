@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculator</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+      integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+      integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"
+      integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      .html {
+        font-family: "Times New Roman", Times, serif;
+      }
+      .container{
+          padding-left: 130px;
+      }
+      .calHead {
+        padding-top: 20px;
+        width: 100%;
+        margin-top: 100px;
+        margin-left: 150px;
+      }
+      .result {
+        height: 80px;
+        max-width: 1040px;
+        margin: auto;
+        background-color: cadetblue;
+        text-align: right;
+        font-size: 40px;
+      }
+      .keyboard {
+        padding: 30px;
+        max-width: 1040px;
+        margin: auto;
+        justify-content: space-evenly;
+      }
+      .bttn {
+        height: 80px !important;
+        width: 80px !important;
+        border-radius: 50% !important;
+        color: white;
+        margin: 10px;
+        font-size: larger;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="col-6 calHead bg-secondary">
+        <div class="row mt-3 mb-2">
+          <div class="col-10 result">0</div>
+        </div>
+        <div class="row keyboard">
+          <button class="bttn btn btn-dark" onclick="number(1)">1</button>
+          <button class="bttn btn btn-dark" onclick="number(2)">2</button>
+          <button class="bttn btn btn-dark" onclick="number(3)">3</button>
+          <button class="bttn btn btn-warning operator">*</button>
+          <button class="bttn btn btn-dark" onclick="number(4)">4</button>
+          <button class="bttn btn btn-dark" onclick="number(5)">5</button>
+          <button class="bttn btn btn-dark" onclick="number(6)">6</button>
+          <button class="bttn btn btn-warning operator">/</button>
+          <button class="bttn btn btn-dark" onclick="number(7)">7</button>
+          <button class="bttn btn btn-dark" onclick="number(8)">8</button>
+          <button class="bttn btn btn-dark" onclick="number(9)">9</button>
+          <button class="bttn btn btn-warning operator">+</button>
+          <button class="bttn btn btn-danger" onclick="reset()">C</button>
+          <button class="bttn btn btn-dark" onclick="number(0)">0</button>
+          <button class="bttn btn btn-primary" onclick="result()">=</button>
+          <button class="bttn btn btn-warning operator">-</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      var expstack = [];
+      var exp = "";
+      var opstack = [];
+      var expression = "";
+      function result() {
+        expstack.push(exp);
+        exp = "";
+        if (expstack.length >= 2) {
+              operatn();
+          }
+        document.querySelector(".result").textContent = expstack[0];
+      }
+      function reset() {
+        document.getElementsByClassName("result")[0].innerHTML = "0";
+        expstack = [];
+        exp = "";
+         opstack = [];
+         expression = "";
+      }
+      function number(num) {
+        expression = document.querySelector(".result").textContent;
+        if (expression === "0") {
+          expression =""+ num;
+          exp = "" +num;
+          document.querySelector(".result").textContent = expression;
+        } else {
+          expression += num;
+          exp += num;
+          document.querySelector(".result").textContent = expression;
+        }
+
+      }
+      var operators = document.getElementsByClassName("operator");
+      for (let i = 0; i < operators.length; i++) {
+        operators[i].addEventListener("click", (e) => {
+          operation(e);
+        });
+      }
+      function operation(event) {
+        var operator = event.target.textContent;
+        if(exp.length>0){
+        expstack.push(exp);
+        exp = "";
+        }
+        opstack.push(operator);
+
+        if (opstack.length > expstack.length) {
+          document.querySelector(".result").innerHTML =
+            "<p>Wrong input</p>";
+        } else {
+          expression = document.querySelector(".result").textContent;
+          expression += operator;
+          document.querySelector(".result").textContent = expression;
+          if (expstack.length >= 2) {
+              operatn();
+          }
+        }
+      }
+      function operatn(){
+        let op = opstack[0];
+            opstack.shift();
+            if (op === "+") {
+              let value = Number(expstack[0]);
+              expstack.shift();
+              let value2 = Number(expstack[0]);
+              expstack.shift();
+
+              expstack.unshift(""+(value + value2));
+            } 
+            else if (op === "/") {
+              let value = Number(expstack[0]);
+              expstack.shift();
+              let value2 = Number(expstack[0]);
+              expstack.shift();
+              expstack.unshift(""+(value / value2));
+            } 
+            else if (op === "*") {
+              let value = Number(expstack[0]);
+              expstack.shift();
+              let value2 = Number(expstack[0]);
+              expstack.shift();
+              expstack.unshift(""+(value * value2));
+            } 
+            else {
+              let value = Number(expstack[0]);
+              expstack.shift();
+              let value2 = Number(expstack[0]);
+              expstack.shift();
+              expstack.unshift(""+(value - value2));
+            }
+          }
+    </script>
+  </body>
+</html>
